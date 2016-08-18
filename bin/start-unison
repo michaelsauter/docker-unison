@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Create directory for filesync
+if [ ! -d "$UNISON_DIR" ]; then
+    echo "Creating $UNISON_DIR directory for sync..."
+    mkdir -p $UNISON_DIR >> /dev/null 2>&1
+fi
+
+# Start process on path which we want to sync
+cd $UNISON_DIR
+
+# Change ownership if required
+if ! getent passwd $UNISON_UID; then
+	adduser -D -u $UNISON_UID unisonuser
+fi
+if ! getent group $UNISON_GID; then
+	addgroup -g $UNISON_GID unisongroup
+fi
+chown -R $UNISON_UID:$UNISON_GID .
+
+su $(getent passwd $UNISON_UID | cut -d: -f1) -c "run-unison"
