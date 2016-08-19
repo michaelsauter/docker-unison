@@ -1,0 +1,2 @@
+#!/bin/sh
+unison -socket 5000
